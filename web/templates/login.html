@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCRATION Login</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #e2e8f0;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --border: #334155;
+            --error: #ef4444;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-card {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            width: 100%;
+            max-width: 320px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: white;
+            font-size: 1rem;
+            box-sizing: border-box; /* Fix padding issue */
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .error-msg {
+            color: var(--error);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <span class="logo">🤖 OCRATION</span>
+        <p class="subtitle">Secure Mobile Access</p>
+        
+        <form id="loginForm">
+            <div id="error" class="error-msg"></div>
+            <input type="text" id="code" placeholder="ENTER ACCESS CODE" autocomplete="off" required>
+            <button type="submit">Unlock</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const code = document.getElementById('code').value;
+            const btn = e.target.querySelector('button');
+            const errorDiv = document.getElementById('error');
+            
+            btn.disabled = true;
+            btn.innerText = "Verifying...";
+            errorDiv.style.display = 'none';
+
+            try {
+                const res = await fetch('/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({code: code})
+                });
+
+                const data = await res.json();
+                
+                if (res.ok && data.success) {
+                    window.location.href = '/';
+                } else {
+                    errorDiv.innerText = data.error || "Invalid code";
+                    errorDiv.style.display = 'block';
+                    btn.disabled = false;
+                    btn.innerText = "Unlock";
+                }
+            } catch (err) {
+                errorDiv.innerText = "Connection error";
+                errorDiv.style.display = 'block';
+                btn.disabled = false;
+                btn.innerText = "Unlock";
+            }
+        });
+    </script>
+</body>
+</html>

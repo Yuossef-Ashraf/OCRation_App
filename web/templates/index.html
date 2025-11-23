@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OCRATION - Modern AI OCR</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-main: #0b1121;
+      /* Deepest Navy */
+      --bg-card: #151f32;
+      /* Lighter Navy for cards */
+      --accent: #8b5cf6;
+      /* Purple/Violet */
+      --accent-hover: #7c3aed;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --input-bg: #0f172a;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Outfit', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Navbar */
+    .navbar {
+      background-color: var(--bg-main);
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .navbar-brand {
+      font-weight: 600;
+      color: var(--text-main) !important;
+      font-size: 1.25rem;
+      letter-spacing: 0.5px;
+    }
+
+    .navbar-brand i {
+      color: #60a5fa;
+    }
+
+    /* Logo Icon Blue */
+
+    .btn-mode {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      font-size: 0.85rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+    }
+
+    /* Cards */
+    .custom-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Labels & Text */
+    label {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-bottom: 0.25rem;
+      font-weight: 500;
+    }
+
+    .section-header {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Inputs & Selects */
+    .form-control,
+    .form-select {
+      background-color: var(--input-bg);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      font-size: 0.9rem;
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      background-color: var(--input-bg);
+      border-color: var(--accent);
+      color: var(--text-main);
+      box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.25);
+    }
+
+    ::placeholder {
+      color: #475569;
+    }
+
+    /* Buttons */
+    .btn-purple {
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      font-weight: 500;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-purple:hover {
+      background-color: var(--accent-hover);
+      color: white;
+    }
+
+    .btn-secondary-custom {
+      background-color: var(--input-bg);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+    }
+
+    .btn-secondary-custom:hover {
+      background-color: #1e293b;
+      border-color: #475569;
+      color: white;
+    }
+
+    /* Specific Layout Items */
+    .file-list-area {
+      min-height: 50px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .file-item {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #cbd5e1;
+      /* Brighter color for visibility */
+    }
+
+    .editor-area {
+      background-color: var(--bg-main);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: #e2e8f0;
+      font-family: 'Courier New', 'Consolas', monospace !important;
+      white-space: pre !important;
+      overflow-x: auto;
+      padding: 1rem;
+      min-height: 400px;
+      max-height: 550px;
+      overflow-y: auto;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      outline: none;
+    }
+
+    .search-box input {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-right: none;
+    }
+
+    .search-box .btn {
+      background: var(--accent);
+      color: #fff;
+      border: 1px solid var(--accent);
+    }
+
+    /* Bottom Actions Bar */
+    .bottom-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 1rem;
+    }
+
+    .format-badge {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-main);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    .bg-dark-modal {
+      background-color: #151f32;
+      border: 1px solid #334155;
+    }
+
+    .modal-text {
+      color: #e2e8f0;
+    }
+
+    .highlight {
+      background-color: #f59e0b;
+      color: black;
+      padding: 2px 4px;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="navbar">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-3">
+        <a class="navbar-brand" href="#">
+          <i class="fas fa-robot me-2"></i>OCRATION
+        </a>
+        <span id="connectionStatus"
+          class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 rounded-pill px-3">
+          <i class="fas fa-circle-notch fa-spin me-1"></i> Checking AI...
+        </span>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <span class="text-muted small d-none d-md-block">Modern OCR & Text Processing</span>
+        <button class="btn-mode"><i class="fas fa-sun me-1"></i> Light Mode</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid px-4 py-3">
+    <div class="row g-4">
+
+      <!-- LEFT COLUMN -->
+      <div class="col-lg-4">
+
+        <!-- Camera Index (Optional, hidden visually often in web but kept for structure) -->
+        <div class="mb-3">
+          <label>Camera Index</label>
+          <select class="form-select">
+            <option>0 - Auto Detect</option>
+          </select>
+        </div>
+
+        <!-- Main Action Buttons -->
+        <div class="row g-2 mb-4">
+          <div class="col-6">
+            <button class="btn btn-purple w-100 py-2" id="selectFilesBtn">
+              <i class="fas fa-folder-open me-2"></i> Select Files
+            </button>
+            <input type="file" id="fileInput" multiple hidden accept="image/*">
+          </div>
+          <div class="col-6">
+            <button class="btn btn-purple w-100 py-2" id="cameraBtn">
+              <i class="fas fa-camera me-2"></i> Capture
+            </button>
+          </div>
+        </div>
+
+        <!-- Selected Files List -->
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <label class="mb-0 fs-6 text-white"><i class="fas fa-list me-2"></i>Selected Files</label>
+          <button class="btn btn-sm btn-outline-primary py-0" style="font-size:0.75rem;"
+            onclick="document.getElementById('fileInput').click()">Add More</button>
+        </div>
+        <div class="custom-card p-2 file-list-area mb-4">
+          <div id="fileList" class="text-center text-muted small pt-2">No files selected</div>
+        </div>
+
+        <!-- Processing Settings Card -->
+        <div class="custom-card">
+          <div class="section-header">
+            <i class="fas fa-cogs"></i> Processing Settings
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label>OCR Mode</label>
+              <select class="form-select" id="ocrMode">
+                <option value="standard">Standard</option>
+                <option value="high">High (Handwriting)</option>
+                <option value="extreme" selected>Extreme High</option>
+                <option value="auto">Auto Smart</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label>Text Order</label>
+              <div class="input-group">
+                <select class="form-select" id="entityLayout">
+                  <option value="none" selected>Default</option>
+                  <option value="email_first">Email First</option>
+                  <option value="phone_first">Phone First</option>
+                  <option value="name_first">Name First</option>
+                  <option value="custom">Custom...</option>
+                </select>
+                <button class="btn btn-outline-secondary" id="reApplyOrderBtn" title="Re-run Organization">
+                  <i class="fas fa-sync-alt"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label>Translation</label>
+            <div class="d-flex align-items-center gap-3">
+              <select class="form-select flex-grow-1" id="translation">
+                <option value="original">Original</option>
+                <option value="en">English</option>
+                <option value="ar">Arabic</option>
+              </select>
+              <div class="form-check pt-3">
+                <input class="form-check-input" type="checkbox" id="summarize">
+                <label class="form-check-label text-white small" for="summarize">Summarize</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button class="btn btn-purple px-4" id="processBtn">
+              <i class="fas fa-play me-2"></i> Process
+            </button>
+            <button class="btn btn-secondary-custom px-4" id="clearBtn">
+              <i class="fas fa-trash me-2"></i> Clear
+            </button>
+          </div>
+
+          <!-- Spinner -->
+          <small id="statusText" class="d-block mt-3 text-accent text-center"></small>
+        </div>
+
+      </div> <!-- End Left Col -->
+
+      <!-- RIGHT COLUMN -->
+      <div class="col-lg-8">
+
+        <!-- Search Card -->
+        <div class="custom-card p-3 mb-3">
+          <label class="mb-2"><i class="fas fa-search me-1"></i> Search</label>
+          <div class="input-group search-box">
+            <input type="text" class="form-control" placeholder="Search text..." id="searchInput">
+            <button class="btn" type="button" id="searchBtn"><i class="fas fa-search"></i></button>
+            <button class="btn btn-secondary" type="button" id="clearSearchBtn"
+              style="border-left:1px solid #334155;"><i class="fas fa-times"></i></button>
+          </div>
+        </div>
+
+        <!-- Result Area -->
+        <div class="custom-card h-100 d-flex flex-column">
+          <div class="section-header">
+            <i class="fas fa-file-alt"></i> Extracted Text (Editable)
+          </div>
+
+          <!-- Editable Text Area -->
+          <div id="textOutput" class="editor-area flex-grow-1" contenteditable="true"></div>
+
+          <!-- Bottom Actions -->
+          <div class="bottom-actions align-items-center">
+            <button class="btn btn-purple px-4" id="saveBtn"><i class="fas fa-save me-2"></i> Save</button>
+
+            <div class="d-flex align-items-center gap-2">
+              <select class="form-select" id="saveFormat" style="max-width: 110px;">
+                <option value="txt">TXT</option>
+                <option value="pdf">PDF</option>
+                <option value="doc">Word</option>
+                <option value="html">HTML</option>
+                <option value="json">JSON</option>
+                <option value="csv">CSV</option>
+                <option value="xml">XML</option>
+                <option value="yaml">YAML</option>
+                <option value="xlsx">Excel</option>
+              </select>
+            </div>
+
+            <input type="text" class="form-control" id="filename" placeholder="filename" style="max-width: 200px;">
+
+            <div class="ms-auto d-flex gap-2">
+              <button class="btn btn-sm btn-outline-secondary" id="copyBtn" title="Copy"><i
+                  class="fas fa-copy"></i></button>
+              <button class="btn btn-sm btn-success" id="exportXlsxBtn" title="Export Excel (Tables)"><i
+                  class="fas fa-file-excel"></i></button>
+            </div>
+          </div>
+        </div>
+
+      </div> <!-- End Right Col -->
+
+    </div>
+  </div>
+
+  <!-- Custom Order Modal -->
+  <div class="modal fade" id="customOrderModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-dark-modal modal-text">
+        <div class="modal-header border-secondary">
+          <h5 class="modal-title">Custom Entity Ordering</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted small">Select the order for entities (email, phone, name, address):</p>
+          <div class="d-grid gap-3">
+            <div>
+              <label class="text-accent">Position 1</label>
+              <select class="form-select" id="orderPos1">
+                <option value="Email" selected>Email</option>
+                <option value="Phone">Phone</option>
+                <option value="Name">Name</option>
+                <option value="Address">Address</option>
+                <option value="">(Empty)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-accent">Position 2</label>
+              <select class="form-select" id="orderPos2">
+                <option value="Email">Email</option>
+                <option value="Phone" selected>Phone</option>
+                <option value="Name">Name</option>
+                <option value="Address">Address</option>
+                <option value="">(Empty)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-accent">Position 3</label>
+              <select class="form-select" id="orderPos3">
+                <option value="Email">Email</option>
+                <option value="Phone">Phone</option>
+                <option value="Name" selected>Name</option>
+                <option value="Address">Address</option>
+                <option value="">(Empty)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-accent">Position 4</label>
+              <select class="form-select" id="orderPos4">
+                <option value="Email">Email</option>
+                <option value="Phone">Phone</option>
+                <option value="Name">Name</option>
+                <option value="Address" selected>Address</option>
+                <option value="">(Empty)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-secondary">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-purple btn-sm" id="applyOrderBtn">Apply Order</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Camera Modal -->
+  <div class="modal fade" id="cameraModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content bg-dark-modal">
+        <div class="modal-body p-0">
+          <video id="cameraStream" autoplay playsinline
+            style="width:100%; height:400px; object-fit:cover; border-radius:8px;"></video>
+        </div>
+        <div class="modal-footer border-secondary p-2 d-flex justify-content-between">
+          <button class="btn btn-outline-light btn-sm" id="switchCameraBtn">
+            <i class="fas fa-sync-alt me-2"></i>Flip Camera
+          </button>
+          <div>
+            <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            <button class="btn btn-purple btn-sm" id="capturePhotoBtn">Capture</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS Logic -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    let uploadedFiles = [];
+    let cameraStream = null;
+    let isProcessing = false;
+    let customOrderList = [];
+    let lastTablesGroups = [];
+
+    // Elements
+    const textOutput = document.getElementById("textOutput");
+    const fileList = document.getElementById("fileList");
+    const statusText = document.getElementById("statusText");
+
+    // --- 0. Init & Health Check ---
+    async function checkHealth() {
+      try {
+        const res = await fetch("/api/health");
+        const data = await res.json();
+        const badge = document.getElementById("connectionStatus");
+
+        if (badge) {
+          if (data.llm_available) {
+            badge.className = "badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3";
+            badge.innerHTML = '<i class="fas fa-brain me-1"></i> AI Online';
+          } else {
+            badge.className = "badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill px-3";
+            badge.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i> AI Offline';
+          }
+        }
+      } catch (e) { console.error("Health check failed", e); }
+    }
+    checkHealth();
+
+    // --- 1. Settings Logic ---
+    const entityLayoutSelect = document.getElementById("entityLayout");
+    const customOrderModal = new bootstrap.Modal(document.getElementById("customOrderModal"));
+    const reApplyOrderBtn = document.getElementById("reApplyOrderBtn");
+
+    entityLayoutSelect.onchange = async () => {
+      if (entityLayoutSelect.value === "custom") {
+        customOrderModal.show();
+      } else {
+        updateOrderListFromSelect(entityLayoutSelect.value);
+        await tryInstantReformat();
+      }
+    };
+
+    // Allow re-triggering logic via button
+    reApplyOrderBtn.onclick = async () => {
+      if (entityLayoutSelect.value === "custom") {
+        if (customOrderList.length === 0) customOrderModal.show();
+        else await tryInstantReformat();
+      } else {
+        await tryInstantReformat();
+      }
+    };
+
+    document.getElementById("applyOrderBtn").onclick = async () => {
+      customOrderList = [
+        document.getElementById("orderPos1").value,
+        document.getElementById("orderPos2").value,
+        document.getElementById("orderPos3").value,
+        document.getElementById("orderPos4").value
+      ].filter(x => x && x.trim().length > 0);
+      customOrderModal.hide();
+      await tryInstantReformat();
+    };
+
+    function updateOrderListFromSelect(val) {
+      if (val === "email_first") customOrderList = ["Email", "Phone", "Name", "Address"];
+      else if (val === "phone_first") customOrderList = ["Phone", "Email", "Name", "Address"];
+      else if (val === "name_first") customOrderList = ["Name", "Phone", "Email", "Address"];
+      else customOrderList = [];
+    }
+
+    async function tryInstantReformat() {
+      const currentText = textOutput.innerText.trim();
+      if (!currentText || !customOrderList.length) return;
+
+      // Don't reformat if it's too short (e.g. just "Processing...")
+      if (currentText.length < 5) return;
+
+      const startTime = Date.now();
+      statusText.innerText = "Reformatting with AI...";
+      textOutput.style.opacity = "0.5";
+
+      try {
+        const resRaw = await fetch("/api/reformat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: currentText,
+            entity_order: customOrderList
+          })
+        });
+
+        // Try to parse JSON, but if it fails (e.g. 500 HTML), capture the text
+        let res;
+        try {
+          res = await resRaw.json();
+        } catch (jsonErr) {
+          const rawText = await resRaw.text();
+          throw new Error(`Server Error (${resRaw.status}): ${rawText.substring(0, 80)}...`);
+        }
+
+        if (res.text) {
+          textOutput.innerText = res.text;
+          const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+          statusText.innerHTML = `<span style="font-size: 1.15em; font-weight: 600;">The process of arrangement</span> (Time: ${elapsed}s)`;
+          statusText.classList.add("text-success");
+        } else if (res.error) {
+          statusText.innerText = "AI Error: " + res.error;
+        }
+      } catch (e) {
+        console.error(e);
+        statusText.innerText = "Failed: " + e.message;
+      } finally {
+        textOutput.style.opacity = "1";
+      }
+    }
+
+    // --- 2. Files & Camera ---
+    document.getElementById("selectFilesBtn").onclick = () => document.getElementById("fileInput").click();
+    document.getElementById("fileInput").onchange = (e) => {
+      uploadedFiles = [...uploadedFiles, ...Array.from(e.target.files)];
+      renderFiles();
+    };
+
+    function renderFiles() {
+      if (!uploadedFiles.length) { fileList.innerHTML = "No files selected"; return; }
+      fileList.innerHTML = "";
+      uploadedFiles.forEach((f, i) => {
+        const div = document.createElement("div");
+        div.className = "file-item";
+        div.innerHTML = `<span><i class="fas fa-file-image me-2 text-primary"></i>${f.name}</span> <i class="fas fa-times text-danger" style="cursor:pointer" onclick="removeFile(${i})"></i>`;
+        fileList.appendChild(div);
+      });
+    }
+    window.removeFile = (i) => { uploadedFiles.splice(i, 1); renderFiles(); };
+
+    const cameraModalInst = new bootstrap.Modal(document.getElementById("cameraModal"));
+    let currentFacingMode = 'environment'; // Default: Back Camera
+
+    async function startCamera() {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+      }
+      try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: currentFacingMode }
+        });
+        document.getElementById("cameraStream").srcObject = cameraStream;
+      } catch (e) {
+        console.error(e);
+        alert("Camera failed: " + e.message);
+      }
+    }
+
+    document.getElementById("switchCameraBtn").onclick = async () => {
+      // Toggle Mode
+      currentFacingMode = (currentFacingMode === 'environment') ? 'user' : 'environment';
+      await startCamera();
+    };
+
+    document.getElementById("cameraBtn").onclick = async () => {
+      await startCamera();
+      cameraModalInst.show();
+    };
+
+    // Stop camera when modal is closed
+    document.getElementById("cameraModal").addEventListener('hidden.bs.modal', () => {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+      }
+    });
+    document.getElementById("capturePhotoBtn").onclick = () => {
+      const v = document.getElementById("cameraStream");
+      const c = document.createElement("canvas");
+      c.width = v.videoWidth; c.height = v.videoHeight;
+      c.getContext("2d").drawImage(v, 0, 0);
+      c.toBlob(b => {
+        uploadedFiles.push(new File([b], `cam_${Date.now()}.jpg`, { type: "image/jpeg" }));
+        renderFiles();
+        cameraModalInst.hide();
+      }, "image/jpeg", 0.9);
+    };
+
+    // --- 3. Process ---
+    document.getElementById("processBtn").onclick = async () => {
+      if (isProcessing || !uploadedFiles.length) return alert("Please select files first.");
+
+      const startTime = Date.now();
+      isProcessing = true;
+      document.getElementById("processBtn").disabled = true;
+      statusText.innerText = "Uploading & Processing...";
+      textOutput.innerHTML = '<span class="text-muted">Processing...</span>';
+
+      try {
+        const fd = new FormData();
+        uploadedFiles.forEach(f => fd.append("files", f));
+
+        const t_upload_start = Date.now();
+        const up = await fetch("/upload", { method: "POST", body: fd }).then(r => r.json());
+        const t_upload_end = Date.now();
+        const upload_sec = ((t_upload_end - t_upload_start) / 1000).toFixed(2);
+
+        if (up.error) throw new Error(up.error);
+
+        statusText.innerText = `Uploaded in ${upload_sec}s. Processing...`;
+
+        const payload = {
+          files: up.files,
+          ocr_mode: document.getElementById("ocrMode").value,
+          translation: document.getElementById("translation").value,
+          summarize: document.getElementById("summarize").checked,
+          entity_order: customOrderList
+        };
+
+        console.log("Sending payload:", payload);
+
+        const t_process_start = Date.now();
+        const res = await fetch("/process", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }).then(r => r.json());
+        const t_process_end = Date.now();
+        const process_sec = ((t_process_end - t_process_start) / 1000).toFixed(2);
+
+        if (res.error) throw new Error(res.error);
+
+        textOutput.innerText = res.text;
+
+        // Calculate Time breakdown
+        let statsHtml = `Upload: <b>${upload_sec}s</b>`;
+        statsHtml += `<br>Processing: <b>${process_sec}s</b>`;
+
+        if (res.timing) {
+          statsHtml += ` <span class="text-muted small">(OCR: ${res.timing.ocr}s, AI: ${res.timing.ai}s)</span>`;
+        }
+
+        statusText.innerHTML = statsHtml;
+        statusText.classList.add("text-success");
+
+        lastTablesGroups = res.tables || [];
+        if (lastTablesGroups.length > 0) {
+          statusText.innerHTML += `<br><i class="fas fa-table"></i> ${lastTablesGroups.length} tables found`;
+        }
+
+      } catch (e) {
+        textOutput.innerText = "Error: " + e.message;
+        statusText.innerText = "Failed";
+        statusText.classList.remove("text-success");
+      } finally {
+        isProcessing = false;
+        document.getElementById("processBtn").disabled = false;
+      }
+    };
+
+    document.getElementById("clearBtn").onclick = () => {
+      uploadedFiles = [];
+      renderFiles();
+      textOutput.innerText = "";
+      statusText.innerText = "";
+      lastTablesGroups = [];
+      document.getElementById("fileInput").value = "";
+    };
+
+    // --- 4. Sidebar Actions ---
+    document.getElementById("copyBtn").onclick = () => navigator.clipboard.writeText(textOutput.innerText);
+
+    document.getElementById("saveBtn").onclick = async () => {
+      const text = textOutput.innerText;
+      const fname = document.getElementById("filename").value || "output";
+      const fmt = document.getElementById("saveFormat").value;
+
+      // Map 'doc' to 'docx' if needed
+      const realFmt = (fmt === 'doc') ? 'docx' : fmt;
+
+      try {
+        const res = await fetch("/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: text,
+            filename: fname,
+            format: realFmt
+          })
+        });
+
+        if (res.ok) {
+          const blob = await res.blob();
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = `${fname}.${realFmt}`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        } else {
+          const err = await res.json();
+          alert("Save Error: " + (err.error || "Unknown"));
+        }
+      } catch (e) {
+        alert("Network Error: " + e.message);
+      }
+    };
+
+    document.getElementById("exportXlsxBtn").onclick = () => {
+      if (!lastTablesGroups || !lastTablesGroups.length) return alert("No tables detected.");
+      try {
+        const wb = XLSX.utils.book_new();
+        lastTablesGroups.forEach((rows, i) => {
+          const ws = XLSX.utils.aoa_to_sheet(rows);
+          XLSX.utils.book_append_sheet(wb, ws, `Table ${i + 1}`);
+        });
+        XLSX.writeFile(wb, (document.getElementById("filename").value || "tables") + ".xlsx");
+      } catch (e) { alert("Export error"); }
+    };
+
+    // --- Search ---
+    document.getElementById("searchBtn").onclick = () => {
+      const q = document.getElementById("searchInput").value.trim();
+      if (!q) return;
+      const raw = textOutput.innerText;
+      const regex = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi");
+      textOutput.innerHTML = raw.replace(regex, `<span class="highlight">$&</span>`);
+    };
+    document.getElementById("clearSearchBtn").onclick = () => {
+      textOutput.innerText = textOutput.innerText; // Removes HTML tags
+      document.getElementById("searchInput").value = "";
+    };
+  </script>
+</body>
+
+</html>
