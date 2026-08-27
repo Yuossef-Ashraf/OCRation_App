@@ -21,7 +21,10 @@ import shutil
 from typing import Dict, Any, List, Tuple, Optional, Union
 from pathlib import Path
 
-import cv2
+try:
+    import cv2
+except ImportError:
+    cv2 = None
 import numpy as np
 import requests
 import base64
@@ -1245,3 +1248,27 @@ def save_in_all_formats(text: str, output_dir: str, base_name: str) -> Dict[str,
     paths["json"] = json_path
 
     return paths
+
+
+def extract_text(image_path: str, mode: str = "standard", language: Optional[str] = None) -> str:
+    """
+    Extract plain text from an image file path.
+    
+    Args:
+        image_path: Path to the image file
+        mode: OCR mode ('standard', 'high', 'extreme', 'auto')
+        language: OCR language code (default: None, uses system default)
+        
+    Returns:
+        str: Extracted text content
+        
+    Raises:
+        FileNotFoundError: If image file does not exist
+    """
+    if not image_path or not os.path.exists(image_path):
+        raise FileNotFoundError(f"Image file not found: {image_path}")
+    result = extract_text_from_path(image_path, mode=mode, language=language)
+    if isinstance(result, dict):
+        return result.get("text", "")
+    return str(result)
+

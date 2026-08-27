@@ -357,3 +357,20 @@ def translate_text(text: str, target_lang: str) -> str:
             return text
             
     return text
+
+
+def translate(text: str, target_lang: str = "ar") -> str:
+    """
+    Translate text to the target language.
+    
+    Args:
+        text: Input text string
+        target_lang: Language code (default 'ar')
+        
+    Returns:
+        str: Translated text or empty string if input is empty
+    """
+    if not text or not str(text).strip():
+        return ""
+    return translate_text(str(text), target_lang=target_lang)
+
